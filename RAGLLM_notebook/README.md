@@ -9,25 +9,37 @@ End-to-end notebook that:
 
 ## Quickstart (Windows + VS Code)
 
-1) Open this folder in VS Code and run the notebook:
-- File: Automated_SITREP_RAGLLM.ipynb
-- The notebook includes a cell to create a Python 3.11 venv and register a kernel:
-  - If needed, install Python 3.11:
-    powershell> winget install -e --id Python.Python.3.11
-- Run the “Install Packages” cell to install dependencies into the kernel.
+1) **Open this folder in VS Code and run the notebook:**
+   - File: Automated_SITREP_RAGLLM.ipynb
+   - The notebook includes a cell to create a Python 3.11 venv and register a kernel:
+     - If needed, install Python 3.11:
+       powershell> winget install -e --id Python.Python.3.11
+   - Run the “Install Packages” cell to install dependencies into the kernel.
 
-2) Execute the pipeline cells in order:
-- Data ingestion and PDF extraction (saves data/report.pdf and data/report_chunks.json).
-- Retrieval pipeline:
-  - Writes data/chunks.json (the exact chunk list used for FAISS)
-  - Builds models/faiss.index and data/chunk_map.json
-- Generation and V&V (optional probes + groundedness).
+2) **Provide data (any one works)**
+      - Preferred: place your PDF at `data/report.pdf`. If present (and non-empty), the pipeline uses it and skips any download.
+      - Online download (default): fetches the public MOT report to `data/report.pdf`:
+        https://www.mot.gov.sg/docs/default-source/about-mot/missing-of-fitter-from-rtm-zheng-he-at-sea-on-26-december-2024.pdf?sfvrsn=b4c661aa_1
+      - Offline/failed-download fallback: generates a tiny synthetic PDF with ReportLab and saves it to `data/report.pdf`.
+      - If none of the above succeed, the notebook raises an error prompting you to upload `data/report.pdf`.
 
-3) Generate and run the Streamlit app:
-- The “Streamlit App (file writer)” cell writes app/app.py in this folder.
-- Launch from the notebook cell or terminal:
-  powershell> python -m streamlit run app/app.py --server.address localhost --server.port 8501
-- Open http://localhost:8501
+      **Post‑ingestion:**
+      - Extracts page‑anchored text with PyMuPDF (fitz) and writes `data/report_chunks.json`.
+
+  
+3) **Execute the pipeline cells in order:**
+   - Data ingestion and PDF extraction (saves data/report.pdf and data/report_chunks.json).
+   - Retrieval pipeline:
+     - Writes data/chunks.json (the exact chunk list used for FAISS)
+     - Builds models/faiss.index and data/chunk_map.json
+   - Generation and V&V (optional probes + groundedness).
+
+4) **Generate and run the Streamlit app:**
+   - The “Streamlit App (file writer)” cell writes app/app.py in this folder.
+   ```powershell
+      python -m streamlit run app/app.py --server.address localhost --server.port 8501
+      ```
+   - Then open http://localhost:8501.
 
 ## App usage
 - Left pane shows PDF pages (from data/report_chunks.json).
