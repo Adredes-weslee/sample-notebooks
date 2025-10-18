@@ -36,10 +36,9 @@ End-to-end notebook that:
 
 4) **Generate and run the Streamlit app:**
    - The “Streamlit App (file writer)” cell writes app/app.py in this folder.
-   ```powershell
-      python -m streamlit run app/app.py --server.address localhost --server.port 8501
-      ```
-   - Then open http://localhost:8501.
+   - Launch from the notebook cell or terminal:
+     powershell> python -m streamlit run app/app.py --server.address localhost --server.port 8501
+   - Open http://localhost:8501
 
 ## App usage
 - Left pane shows PDF pages (from data/report_chunks.json).
