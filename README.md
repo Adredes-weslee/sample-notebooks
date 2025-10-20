@@ -42,7 +42,7 @@ Open this folder in VS Code, then choose a project:
 - Run cells top → bottom:
   - Create a Python 3.11 venv and install packages (registers kernel “Python 3.11 (sitrep)”).
   - Data pipeline: attempts Kaggle download of the Singapore Maritime dataset; if offline/fails, generates synthetic clear/adverse images + labels. Extracts frames from .avi, pseudo‑labels with COCO YOLO if needed, writes data_clear.yaml/data_adverse.yaml.
-  - Optional training: fine‑tunes YOLOv8n on clear‑only (default 5 epochs), evaluates on clear vs adverse, writes artifacts, and generates app/app.py.
+  - Optional training: Blue Lane (clear-only, default 5 epochs) and Red Lane (mixed‑weather + stronger aug + larger imgsz). Evaluates clear vs adverse and writes artifacts (see below).
 - Launch app (from the notebook cell or terminal in YOLO_notebook):
   - Terminal (PowerShell):
     powershell> python -m streamlit run app/app.py --server.address localhost --server.port 8501
@@ -62,6 +62,7 @@ Open this folder in VS Code, then choose a project:
   - app/app.py (generated)
   - data/, models/, artifacts/, runs/ (generated)
   - data_clear.yaml, data_adverse.yaml (generated)
+  - data_mixed.yaml, data/maritime/lists/mixed_train.txt (generated if Red Lane runs)
 
 ## Tips
 - First run downloads models; subsequent runs are faster due to caching.
@@ -70,10 +71,20 @@ Open this folder in VS Code, then choose a project:
   - Force fresh Kaggle download: powershell> $env:FORCE_KAGGLE="1"
   - Force re‑extract raw videos: powershell> $env:FORCE_REEXTRACT="1"
   - Skip YOLO training: powershell> $env:SKIP_HEAVY_TRAINING="True"
+  - Red Lane (optional):
+    - powershell> $env:RUN_RED_LANE="1"
+    - powershell> $env:MIX_ADVERSE_RATIO="0.3"
+    - powershell> $env:RED_EPOCHS="30"
+    - powershell> $env:RED_IMGSZ="960"
 - All apps write run summaries to artifacts/.
 - Change Streamlit host/port:
   - powershell> $env:PORT="8501"; $env:BIND_ADDR="localhost"
   - powershell> python -m streamlit run app/app.py --server.address $env:BIND_ADDR --server.port $env:PORT
+
+## Key YOLO artifacts
+- Blue Lane: artifacts/perf_clear.json, artifacts/perf_adverse.json, artifacts/degradation.csv, artifacts/vnv_report.md, models/yolov8n_clear.pt
+- Red Lane: artifacts/perf_mixed_clear.json, artifacts/perf_mixed_adverse.json, artifacts/degradation_mixed.csv, artifacts/redlane_comparison.csv, artifacts/vnv_report_mixed.md, models/yolov8n_mixed.pt
+- Model card and spec: artifacts/model_card.md, artifacts/spec_drive.md
 
 ## License and data use
 Educational/experimental use with public/open sample data. Review any external data licenses before use in production.
