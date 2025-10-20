@@ -16,7 +16,7 @@ End-to-end notebook that:
      ```
 3) Switch the notebook kernel to “Python 3.11 (sitrep)”.
 4) Run “Install Packages (graceful)”.
-5) Run the remaining cells to prepare data, optionally train, evaluate, save artifacts, and write the Streamlit app.
+5) Run the remaining cells to prepare data, optionally train (Blue and/or Red lane), evaluate, save artifacts, write the Streamlit app, and launch it.
 
 Notes
 - Kaggle download uses `opendatasets`. If offline or it fails, a synthetic dataset is auto‑generated.
@@ -50,15 +50,28 @@ Env flags (PowerShell)
   ```powershell
   $env:SKIP_HEAVY_TRAINING="True"
   ```
+- Red Lane (optional, mixed‑weather + stronger aug + larger imgsz):
+  ```powershell
+  $env:RUN_RED_LANE="1"         # enable Red Lane (default "1")
+  $env:MIX_ADVERSE_RATIO="0.3"  # fraction of adverse images to mix into train
+  $env:RED_EPOCHS="30"          # Red Lane epochs
+  $env:RED_IMGSZ="960"          # Red Lane image size
+  ```
 
 ## Training and evaluation
 
 - Model: YOLOv8n. Default 5 epochs on clear‑only (GPU if available, else CPU).
-- Evaluation:
+- Evaluation (Blue Lane):
   - Clear validation metrics → `artifacts/perf_clear.json`
   - Adverse test metrics → `artifacts/perf_adverse.json`
   - Drift table/report → `artifacts/degradation.csv`, `artifacts/vnv_report.md`
-- Model card is initialized and then appended with run details → `artifacts/model_card.md`
+- Red Lane (optional):
+  - Mixed‑weather fine‑tuning and stronger augmentations
+  - Metrics → `artifacts/perf_mixed_clear.json`, `artifacts/perf_mixed_adverse.json`
+  - Degradation → `artifacts/degradation_mixed.csv`
+  - Blue vs Red comparison → `artifacts/redlane_comparison.csv`
+  - Weights saved at `models/yolov8n_mixed.pt` (if training ran)
+- Model card is initialized and then appended with run details and tables → `artifacts/model_card.md`
 - Sample annotated predictions saved under `artifacts/plots/{clear,adverse}`
 
 ## Streamlit app
@@ -77,20 +90,29 @@ The notebook writes `app/app.py`. Launch from the notebook “Launch app” cell
   ```
 
 App features
-- Side‑by‑side inference on clear vs adverse samples.
-- Sidebar controls: confidence threshold and inference size (640/800/960/1280).
+- Model selector with COCO baseline + any local fine‑tuned weights.
+- Optional side‑by‑side comparison between two models.
+- Clear vs adverse sample galleries with on‑image boxes.
 - Image uploader with the same controls.
 - Illustrative precision/recall proxy plot (for real V&V, use ground‑truth + IoU).
-- Run summary written to `artifacts/run_summary.json`.
+- Artifacts dashboard: Blue/Red metrics JSON, degradation CSVs, comparison CSV, V&V reports, model card.
+- Quick downloads for key artifacts.
+- Run summary written to `artifacts/run_summary.json` (if produced).
 
 ## Outputs (key paths)
 
 - `data/maritime/...` — prepared dataset (or synthetic fallback)
-- `models/yolov8n_clear.pt` — trained weights (if training ran)
-- `artifacts/` — metrics, plots, degradation report, model card
+- `models/yolov8n_clear.pt` — Blue Lane weights (if training ran)
+- `models/yolov8n_mixed.pt` — Red Lane weights (if training ran)
+- `artifacts/perf_clear.json`, `artifacts/perf_adverse.json`
+- `artifacts/degradation.csv`, `artifacts/vnv_report.md`
+- `artifacts/perf_mixed_clear.json`, `artifacts/perf_mixed_adverse.json`
+- `artifacts/degradation_mixed.csv`, `artifacts/redlane_comparison.csv`
+- `artifacts/model_card.md`, `artifacts/spec_drive.md`
 - `artifacts/plots/{clear,adverse}/*.jpg` — sample annotated predictions
 - `app/app.py` — Streamlit app
-- `data_clear.yaml`, `data_adverse.yaml` — YOLO data configs
+- `data_clear.yaml`, `data_adverse.yaml`, `data_mixed.yaml`
+- `data/maritime/lists/mixed_train.txt`
 - `runs/` — Ultralytics training outputs
 
 ## Troubleshooting
