@@ -1,10 +1,6 @@
 # All-Weather Maritime Asset Identification (YOLOv8)
 
-<video src="YOLO_notebook/images/Recording.mp4"
-       controls loop muted playsinline width="720">
-  Your browser does not support embedded video.
-  <a href="YOLO_notebook/images/Recording.mp4">Download MP4</a>
-</video>
+![Demo](images/demo.gif)
 
 
 End-to-end notebook that:
