@@ -1,5 +1,7 @@
 # Automated SITREP Generator (RAG + Streamlit)
 
+![Demo](images/demo.gif)
+
 End-to-end notebook that:
 - Extracts text from a public MOT Marine accident investigation PDF (with offline synthetic fallback).
 - Splits text into chunks and indexes with FAISS + sentence-transformers.

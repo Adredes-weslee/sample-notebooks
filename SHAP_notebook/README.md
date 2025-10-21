@@ -1,5 +1,7 @@
 # Predictive Maintenance — XGBoost + SHAP (Notebook + Streamlit)
 
+![Demo](images/demo.gif)
+
 End-to-end notebook that:
 - Trains an XGBoost classifier on an Industrial IoT fault dataset (with offline fallbacks).
 - Performs V&V (PR-AUC, ROC-AUC, confusion matrix, calibration/ECE, threshold tuning).
