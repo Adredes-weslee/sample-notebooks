@@ -63,3 +63,7 @@ logs/
 *.so
 *.dylib
 *.dll
+
+
+RAGLLM_notebook/hf_cache/
+YOLO_notebook/data/maritime/
