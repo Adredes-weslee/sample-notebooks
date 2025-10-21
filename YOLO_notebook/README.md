@@ -1,5 +1,12 @@
 # All-Weather Maritime Asset Identification (YOLOv8)
 
+<video src="YOLO_notebook/images/Recording.mp4"
+       controls loop muted playsinline width="720">
+  Your browser does not support embedded video.
+  <a href="YOLO_notebook/images/Recording.mp4">Download MP4</a>
+</video>
+
+
 End-to-end notebook that:
 - Curates a maritime dataset into clear_weather vs adverse_weather (with synthetic fallback when needed).
 - Fine-tunes YOLOv8n on clear-only and evaluates on clear vs adverse to quantify drift.
